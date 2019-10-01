@@ -68,5 +68,5 @@ const loginRedir = function( e ) {
   //  headers: { 'Content-Type': 'application/json' },
   //  credentials: 'include' 
   //})
-  window.location.replace('https://a3-pjjankowski.glitch.me/loggedIn.html');
+  window.location.replace('https://fp-start.glitch.me/mainview.html');
 }

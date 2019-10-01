@@ -41,6 +41,7 @@ let db = new sqlite3.Database('./student.db', (err) => {
 db.serialize(function(){
     db.run('CREATE TABLE IF NOT EXISTS Grades (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, number TEXT NOT NULL, letter TEXT NOT NULL, username TEXT);');
     db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT);');
+    db.run('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, contents TEXT);');
     
     // Default Users:
     // Username: User1
@@ -164,6 +165,22 @@ app.post('/view', function(request, response) {
     console.log(rows);
     console.log(request.user.username);
     resp = '{ "studentArray": '+ JSON.stringify(rows) + ' }';
+    console.log(resp);
+    response.end(resp, 'utf-8');
+  });
+})
+
+// View all of the messages that are intended for this user
+app.post('/viewMessages', function(request, response) {
+  let resp;
+  response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
+  db.all('SELECT * from messages WHERE username = ? ', request.user.username, function(err, rows) {
+    if (rows === undefined) {
+      rows = [];
+    }
+    console.log(rows);
+    console.log(request.user.username);
+    resp = '{ "messagesArray": '+ JSON.stringify(rows) + ' }';
     console.log(resp);
     response.end(resp, 'utf-8');
   });

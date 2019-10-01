@@ -1,23 +1,27 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>CS4241 Assignment 3</title>
+    <title>CS4241 Final Project</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Peter Jankowski">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    
+    <script src="js/messageScripts.js" defer></script>
   </head>
   <body class="p-3 mb-2 bg-dark text-white">
     <nav class="navbar navbar-dark">
-      <h1 class="mx-auto">Calendar</h1>
+      <h1 class="mx-auto">Messages</h1>
     </nav>
     <!-- Login and Signup form-->
     <div>
       <ul>
   <li><a href="https://fp-start.glitch.me/mainview.html">Back to main view</a></li>
+        <!--This table can be shown or hidden to display current messages in the database for the current user only-->
+      <table id="tablePrint" class="table table-dark"></table>
 </ul>
+      <button id="viewButton" class="btn btn-secondary">Show Messages For You</button>
+      <button id="hideButton" class="btn btn-secondary">Hide Messages</button>
     </div>
   </body>
 </html>
