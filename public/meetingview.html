@@ -21,9 +21,21 @@
 </ul>
     </div>
     <fieldset id="entry" class="mx-auto">
-      <label for="meetingname" class="pageText">Name:</label>
+      <label for="meetingname" class="pageText">Meeting Name:</label>
       <input type="text" id="meetingname" placeholder="Meeting Name Here" class="form-control">
-      <button id="inputButton" class="btn btn-primary">View Meeting</button>
+      <button id="viewButton" class="btn btn-primary">View Meeting</button>
+      <button id="hideButton" class="btn btn-primary">Hide Meeting</button>
+      
+      <label for="taskName" class="pageText">Task Name:</label>
+      <input type="text" id="taskName" placeholder="Task name here" class="form-control">
+      
+      <label for="assigneeName" class="pageText">Task Assigned to:</label>
+      <input type="text" id="assigneeName" placeholder="Meeting Name Here" class="form-control">
+      
+      <label for="taskDetails" class="pageText">Task Details:</label>
+      <input type="text" id="taskDetails" placeholder="Task Details here" class="form-control">
+      <button id="inputButton" class="btn btn-primary">Assign task</button>
+      <button id="removeButton" class="btn btn-primary">Remove task</button>
       </fieldset>
     <table id="tablePrint" class="table table-dark"></table>
   </body>

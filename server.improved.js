@@ -18,7 +18,7 @@ app.use(morgan('combined'));
 // Compression allows for responses to be sent more quickly
 app.use(compression());
 //Adds in the favicon from a local file, rather than a URL
-app.use(favicon(path.join(__dirname, 'assets', '5cd46ecf-8f21-44d2-941d-1799ff06883e%2Ffavicon-a3.ico?v=1568478368998')));
+app.use(favicon(path.join(__dirname, 'assets', '3a7a7745-805f-4bc9-9091-f891637e22a2%2FfaviconCheck.ico?v=1570204892951')));
 //Adds in helmet security headers automatically
 app.use(helmet());
 //
@@ -39,10 +39,10 @@ let db = new sqlite3.Database('./student.db', (err) => {
 });
 
 db.serialize(function(){
-    db.run('CREATE TABLE IF NOT EXISTS Grades (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, number TEXT NOT NULL, letter TEXT NOT NULL, username TEXT);');
     db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT);');
     db.run('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, contents TEXT);');
-    
+    db.run('CREATE TABLE IF NOT EXISTS meetings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, username TEXT, date DATE);');
+    db.run('CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, taskName TEXT, assigneeName TEXT, username TEXT, meetingName TEXT, details TEXT);');
     // Default Users:
     // Username: User1
     // Password: Password1
@@ -52,11 +52,6 @@ db.serialize(function(){
     // Password: charliee
     // Students: John Doe, grade of 81, and Mary Sue, grade of 99.9
 
-    db.each('SELECT * from Grades', function(err, row) {
-      if ( row ) {
-        console.log('Initial Student:', row);
-      }
-    });
   db.each('SELECT * from users', function(err, row) {
       if ( row ) {
         console.log('Initial Users:', row);
@@ -95,25 +90,6 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-const alphaFunc = function (grade) {
-    // Get the letter for a student's grade
-    let letter;
-    if (grade >= 90) {
-      letter = "A";
-    } else if (grade >= 80) {
-      letter = "B";
-    } else if (grade >= 70) {
-      letter = "C";
-    } else if (grade >= 60) {
-      letter = "D";
-    } else if (grade > -1 && grade !== '') {
-      letter = "F";
-    } else {
-      letter = "N/A";
-    }
-  return letter;
-}
-
 // Helper function that adds the user to the database
 const dbAddFunc = function(name, number, letter, user) {
   db.run('INSERT INTO Grades (name, number, letter, username) VALUES ("' + name + '","' + number + '","' + letter + '","' + user + '")');
@@ -137,11 +113,35 @@ const router = express.Router({
 app.use(router);
 app.use(slash());
 
-router.get('/loggedIn.html', function(request, response) {
+router.get('/mainview.html', function(request, response) {
   if (!request.user) {
     response.sendFile( __dirname + '/public/index.html' );
   } else {
-    response.sendFile( __dirname + '/public/loggedIn.html' );
+    response.sendFile( __dirname + '/public/mainview.html' );
+  }
+})
+
+router.get('/meetingview.html', function(request, response) {
+  if (!request.user) {
+    response.sendFile( __dirname + '/public/index.html' );
+  } else {
+    response.sendFile( __dirname + '/public/meetingview.html' );
+  }
+})
+
+router.get('/calendarview.html', function(request, response) {
+  if (!request.user) {
+    response.sendFile( __dirname + '/public/index.html' );
+  } else {
+    response.sendFile( __dirname + '/public/calendarview.html' );
+  }
+})
+
+router.get('/messagesview.html', function(request, response) {
+  if (!request.user) {
+    response.sendFile( __dirname + '/public/index.html' );
+  } else {
+    response.sendFile( __dirname + '/public/messagesview.html' );
   }
 })
 
@@ -156,7 +156,7 @@ router.get('/index.html/', function(request, response) {
 
 // View all of the students that have been entered by this user
 app.post('/view', function(request, response) {
-  let resp;
+  /*let resp;
   response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
   db.all('SELECT * from Grades WHERE username = ? ORDER BY name ASC', request.user.username, function(err, rows) {
     if (rows === undefined) {
@@ -167,7 +167,7 @@ app.post('/view', function(request, response) {
     resp = '{ "studentArray": '+ JSON.stringify(rows) + ' }';
     console.log(resp);
     response.end(resp, 'utf-8');
-  });
+  });*/
 })
 
 // View all of the messages that are intended for this user
@@ -181,6 +181,22 @@ app.post('/viewMessages', function(request, response) {
     console.log(rows);
     console.log(request.user.username);
     resp = '{ "messagesArray": '+ JSON.stringify(rows) + ' }';
+    console.log(resp);
+    response.end(resp, 'utf-8');
+  });
+})
+
+// View all of the tasks associated with a given meeting
+app.post('/viewMessages', function(request, response) {
+  let resp;
+  response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
+  db.all('SELECT * from tasks WHERE username = ? AND meetingName = ?', request.user.username, request.body.meeting, function(err, rows) {
+    if (rows === undefined) {
+      rows = [];
+    }
+    console.log(rows);
+    console.log(request.user.username);
+    resp = '{ "tasksArray": '+ JSON.stringify(rows) + ' }';
     console.log(resp);
     response.end(resp, 'utf-8');
   });
@@ -220,7 +236,7 @@ app.post( '/signup', function( request, response ) {
 })
 
 // Remove the previous student with the given name, (if any), and add a new one with the entered grade
-app.post( '/submit', function( request, response ) {
+/*app.post( '/submit', function( request, response ) {
   let resp;
   let letter = alphaFunc(request.body.yourgrade);
   db.run('DELETE FROM Grades WHERE name=? AND username=?', request.body.yourname, request.user.username, function(err) {
@@ -235,13 +251,13 @@ app.post( '/submit', function( request, response ) {
   resp += '"numericGrade":"' + request.body.yourgrade + '"}';
   response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
   response.end(resp, 'utf-8');
-})
+})*/
 
-// Remove a student that belongs to the given user
+// Remove a task that belongs to the given user and meeting
 app.delete('/remove', function( request, response ) {
 
 console.log(request.body.name);
-  db.run('DELETE FROM Grades WHERE name=? AND username=?', request.body.name, request.user.username, function(err) {
+  db.run('DELETE FROM tasks WHERE name=? AND meeting=? AND username=?', request.body.name, request.body.meeting, request.user.username, function(err) {
     if (err) {
       return console.error(err.message);
     }
