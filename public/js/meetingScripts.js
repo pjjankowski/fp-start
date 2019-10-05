@@ -2,9 +2,6 @@
 
 let isHidden = true;
 
-//TODO: Add a table to the db for meetings, and another for tasks,
-// as follows:
-
 // Meeting: name, ID, date, username (of meeting maker)
 // Tasks: MeetingName, ID, user, Details, TaskName, username
 
