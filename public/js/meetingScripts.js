@@ -16,9 +16,10 @@ const submitTask = function( e ) { // Submit request for a new task for a user
   e.preventDefault()
 
   const nameInput = document.querySelector( '#meetingname' ),
-        userInput = document.querySelector( '#assigneeName' ),
-        taskInput = document.querySelector( '#taskName' ),
-        json = { meetingname: nameInput.value,  task: taskInput.value, userForTask: userInput.value },
+        userInput = document.querySelector( '#assigneename' ),
+        taskInput = document.querySelector( '#taskname' ),
+        detailsInput = document.querySelector( '#details' ),
+        json = { meeting: nameInput.value,  task: taskInput.value, name: userInput.value, details: detailsInput.value },
         body = JSON.stringify( json );
 
   fetch( '/submitTask', { //Note that on the server side, this will also give the assigned user a new message about their task
@@ -42,13 +43,13 @@ const submitTask = function( e ) { // Submit request for a new task for a user
 
 const viewMeeting = function(e) {
   e.preventDefault();
-  let taskListArray;
+  let tasksArray;
 
   const nameInput = document.querySelector( '#meetingname' ),
         json = { meetingname: nameInput.value, },
         body = JSON.stringify( json );
   
-  fetch( '/viewMeeting', {
+  fetch( '/viewTasks', {
     method:'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -60,15 +61,15 @@ const viewMeeting = function(e) {
     console.log( response );
     response.json().then((data) => {
       console.log(data);
-      taskListArray = data.taskArray;
-      let numTasks = taskListArray.length;
+      tasksArray = data.tasksArray;
+      let numTasks = tasksArray.length;
     let myTable = '<table class ="pageText"><tr>Meeting: ' + nameInput.value + '</tr><tr><td>Task ID:</td>';
     myTable += "<td>Assigned to:</td>";
     myTable += "<td>Details:</td></tr>";
     for (let i = 0; i < numTasks; i++) { // Make the table with one row per task
-      myTable += "<tr><td>" + taskListArray[i].id + "</td>";
-      myTable += "<td>" + taskListArray[i].name + "</td>";
-      myTable += "<td>" + taskListArray[i].details + "</td></tr>";
+      myTable += "<tr><td>" + tasksArray[i].id + "</td>";
+      myTable += "<td>" + tasksArray[i].name + "</td>";
+      myTable += "<td>" + tasksArray[i].details + "</td></tr>";
     }
     myTable += "</table>";
     document.getElementById("tablePrint").innerHTML = myTable;
@@ -88,11 +89,12 @@ const deleteTask = function( e ) { // Delete a task with a specified id number
   // prevent default form action from being carried out
   e.preventDefault();
 
-  const removeInput = document.querySelector( '#removename' ),
+  const userInput = document.querySelector( '#assigneename' ),
+        taskInput = document.querySelector( '#taskname' ),
         nameInput = document.querySelector( '#meetingname' ),
-        json = { name: removeInput.value, meetingname: nameInput.value};
+        json = { name: userInput.value, meeting: nameInput.value, task: taskInput.value, };
 
-  fetch( '/remove', {
+  fetch( '/removeTask', {
     method:'DELETE',
     body: JSON.stringify( json ),
     headers: { 'Content-Type': 'application/json' },

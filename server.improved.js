@@ -187,7 +187,7 @@ app.post('/viewMessages', function(request, response) {
 })
 
 // View all of the tasks associated with a given meeting
-app.post('/viewMessages', function(request, response) {
+app.post('/viewTasks', function(request, response) {
   let resp;
   response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
   db.all('SELECT * from tasks WHERE username = ? AND meetingName = ?', request.user.username, request.body.meeting, function(err, rows) {
@@ -201,6 +201,18 @@ app.post('/viewMessages', function(request, response) {
     response.end(resp, 'utf-8');
   });
 })
+
+// View a meeting, may not be needed, unfinished
+/*app.post('/viewMeeting', function(request, response) {
+  let resp;
+  db.all('SELECT * from meetings WHERE username = ? AND name = ?', request.user.username, request.body.meeting, function(err, rows) {
+    if (rows === undefined) {
+      rows = [];
+      response.writeHead( 404, "Not Found", {'Content-Type': 'application/json' });
+      response.end(resp, 'utf-8');
+    }
+  });
+})*/
 
 // Add a new user account
 app.post( '/signup', function( request, response ) {
@@ -235,33 +247,39 @@ app.post( '/signup', function( request, response ) {
   })
 })
 
-// Remove the previous student with the given name, (if any), and add a new one with the entered grade
-/*app.post( '/submit', function( request, response ) {
+// Add a new task for a user for a given meeting
+// taskName TEXT, assigneeName TEXT, username TEXT, meetingName TEXT, details TEXT
+app.post( '/submitTask', function( request, response ) {
   let resp;
-  let letter = alphaFunc(request.body.yourgrade);
-  db.run('DELETE FROM Grades WHERE name=? AND username=?', request.body.yourname, request.user.username, function(err) {
-    if (err) {
-      return console.error(err.message);
-    }
-  });
+  let newTaskMSG = "You have been assigned a task " + request.body.task + ", for the meeting " + request.body.meeting;
+  db.run('INSERT INTO messages (sender, receiver, contents) VALUES ("' + request.user.username + '","' + request.body.name + '","' + newTaskMSG + '")');
+  db.run('INSERT INTO tasks (taskName, assigneeName, username, meetingName, details) VALUES ("' + request.body.task + '","' + request.body.name + '","' + request.user.username + '","' + request.body.meeting, request.body.details + '")');
+  //let letter = alphaFunc(request.body.yourgrade);
+  //db.run('DELETE FROM Grades WHERE name=? AND username=?', request.body.yourname, request.user.username, function(err) {
+  //  if (err) {
+  //    return console.error(err.message);
+   // }
+ // });
   // Add in the student with the data provided
-  dbAddFunc(request.body.yourname, request.body.yourgrade, letter, request.user.username);
-  resp = '{"letterGrade":"'+ letter + '",';
-  resp += '"studentName":"' + request.body.yourname + '", ';
-  resp += '"numericGrade":"' + request.body.yourgrade + '"}';
+  //dbAddFunc(request.body.yourname, request.body.yourgrade, letter, request.user.username);
+  //resp = '{"letterGrade":"'+ letter + '",';
+  //resp += '"studentName":"' + request.body.yourname + '", ';
+  //resp += '"numericGrade":"' + request.body.yourgrade + '"}';
   response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
   response.end(resp, 'utf-8');
-})*/
+})
 
 // Remove a task that belongs to the given user and meeting
-app.delete('/remove', function( request, response ) {
+app.delete('/removeTask', function( request, response ) {
 
 console.log(request.body.name);
-  db.run('DELETE FROM tasks WHERE name=? AND meeting=? AND username=?', request.body.name, request.body.meeting, request.user.username, function(err) {
+  db.run('DELETE FROM tasks WHERE name=? AND task=? AND meeting=? AND username=?', request.body.name, request.body.task, request.body.meeting, request.user.username, function(err) {
     if (err) {
       return console.error(err.message);
     }
     console.log(`Row(s) deleted ${this.changes}`);
+    let deleteMSG = "The task " + request.body.task + " that you were assigned for the meeting " + request.body.meeting + " has been removed.";
+    db.run('INSERT INTO messages (sender, receiver, contents) VALUES ("' + request.user.username + '","' + request.body.name + '","' + deleteMSG + '")');
     response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
     response.end('{"removed": "done"}', 'utf-8');
   });
