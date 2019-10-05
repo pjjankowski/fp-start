@@ -41,16 +41,14 @@ let db = new sqlite3.Database('./student.db', (err) => {
 db.serialize(function(){
     db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT);');
     db.run('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, contents TEXT);');
-    db.run('CREATE TABLE IF NOT EXISTS meetings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, username TEXT, date DATE);');
+    db.run('CREATE TABLE IF NOT EXISTS meetings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, username TEXT, date TEXT, details TEXT);');
     db.run('CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, taskName TEXT, assigneeName TEXT, username TEXT, meetingName TEXT, details TEXT);');
     // Default Users:
     // Username: User1
     // Password: Password1
-    // Students: John Doe, grade of 75
     //
     // Username: charlie
     // Password: charliee
-    // Students: John Doe, grade of 81, and Mary Sue, grade of 99.9
 
   db.each('SELECT * from users', function(err, row) {
       if ( row ) {
@@ -154,22 +152,6 @@ router.get('/index.html/', function(request, response) {
   response.sendFile( __dirname + '/public/index.html' );
 })
 
-// View all of the students that have been entered by this user
-app.post('/view', function(request, response) {
-  /*let resp;
-  response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
-  db.all('SELECT * from Grades WHERE username = ? ORDER BY name ASC', request.user.username, function(err, rows) {
-    if (rows === undefined) {
-      rows = [];
-    }
-    console.log(rows);
-    console.log(request.user.username);
-    resp = '{ "studentArray": '+ JSON.stringify(rows) + ' }';
-    console.log(resp);
-    response.end(resp, 'utf-8');
-  });*/
-})
-
 // View all of the messages that are intended for this user
 app.post('/viewMessages', function(request, response) {
   let resp;
@@ -201,18 +183,6 @@ app.post('/viewTasks', function(request, response) {
     response.end(resp, 'utf-8');
   });
 })
-
-// View a meeting, may not be needed, unfinished
-/*app.post('/viewMeeting', function(request, response) {
-  let resp;
-  db.all('SELECT * from meetings WHERE username = ? AND name = ?', request.user.username, request.body.meeting, function(err, rows) {
-    if (rows === undefined) {
-      rows = [];
-      response.writeHead( 404, "Not Found", {'Content-Type': 'application/json' });
-      response.end(resp, 'utf-8');
-    }
-  });
-})*/
 
 // Add a new user account
 app.post( '/signup', function( request, response ) {
@@ -253,20 +223,26 @@ app.post( '/submitTask', function( request, response ) {
   let resp;
   let newTaskMSG = "You have been assigned a task " + request.body.task + ", for the meeting " + request.body.meeting;
   db.run('INSERT INTO messages (sender, receiver, contents) VALUES ("' + request.user.username + '","' + request.body.name + '","' + newTaskMSG + '")');
-  db.run('INSERT INTO tasks (taskName, assigneeName, username, meetingName, details) VALUES ("' + request.body.task + '","' + request.body.name + '","' + request.user.username + '","' + request.body.meeting, request.body.details + '")');
-  //let letter = alphaFunc(request.body.yourgrade);
-  //db.run('DELETE FROM Grades WHERE name=? AND username=?', request.body.yourname, request.user.username, function(err) {
-  //  if (err) {
-  //    return console.error(err.message);
-   // }
- // });
-  // Add in the student with the data provided
-  //dbAddFunc(request.body.yourname, request.body.yourgrade, letter, request.user.username);
-  //resp = '{"letterGrade":"'+ letter + '",';
-  //resp += '"studentName":"' + request.body.yourname + '", ';
-  //resp += '"numericGrade":"' + request.body.yourgrade + '"}';
+  db.run('INSERT INTO tasks (taskName, assigneeName, username, meetingName, details) VALUES ("' + request.body.task + '","' + request.body.name + '","' + request.user.username + '","' + request.body.meeting + '","' + request.body.details + '")');
   response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
   response.end(resp, 'utf-8');
+})
+
+// submit a meeting, but only make it if its name is unique for this user
+app.post( '/submitMeeting', function( request, response ) {
+  let resp;
+  db.get('SELECT * FROM meetings WHERE username=? AND name=?', request.user.username, request.body.name, function(err, row) {
+     if (row) {
+      resp = '{"meetingAdded":' + false + '}';
+      response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
+      response.end(resp, 'utf-8');
+    } else {
+      db.run('INSERT INTO meetings (username, name, date, details) VALUES ("' + request.user.username + '","' + request.body.name + '","' + request.body.date + '","' + request.body.details + '")');
+      resp = '{"meetingAdded":' + true + '}';
+      response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
+      response.end(resp, 'utf-8');
+    }
+  })
 })
 
 // Remove a task that belongs to the given user and meeting
@@ -282,6 +258,26 @@ console.log(request.body.name);
     db.run('INSERT INTO messages (sender, receiver, contents) VALUES ("' + request.user.username + '","' + request.body.name + '","' + deleteMSG + '")');
     response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
     response.end('{"removed": "done"}', 'utf-8');
+  });
+})
+
+// Remove a meeting, and all associated tasks
+app.delete('/removeMeeting', function( request, response ) {
+
+console.log(request.body.name);
+  db.run('DELETE FROM meetings WHERE name=? AND date=? AND username=?', request.body.name, request.body.date, request.user.username, function(err) {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log(`Row(s) deleted ${this.changes}`);
+    db.run('DELETE FROM tasks WHERE meeting=? AND username=?', request.body.name, request.user.username, function(err) {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log(`Row(s) deleted ${this.changes}`);
+    response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
+    response.end('{"removed": "done"}', 'utf-8');
+    });
   });
 })
 
