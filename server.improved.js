@@ -184,6 +184,21 @@ app.post('/viewTasks', function(request, response) {
   });
 })
 
+// View all of the meetings assocaited with a given date
+app.post('/viewMeetings', function(request, response) {
+  let resp;
+  response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
+  db.all('SELECT * from meetings WHERE date=?', request.body.date, function(err, rows) {
+    if (rows === undefined) {
+      rows = [];
+    }
+    console.log(rows);
+    resp = '{ "meetingsArray": '+ JSON.stringify(rows) + ' }';
+    console.log(resp);
+    response.end(resp, 'utf-8');
+  });
+})
+
 // Add a new user account
 app.post( '/signup', function( request, response ) {
   let dataString = '';
