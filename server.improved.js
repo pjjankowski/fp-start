@@ -43,6 +43,9 @@ db.serialize(function(){
     db.run('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, contents TEXT);');
     db.run('CREATE TABLE IF NOT EXISTS meetings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, username TEXT, date TEXT, details TEXT);');
     db.run('CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, taskName TEXT, assigneeName TEXT, username TEXT, meetingName TEXT, details TEXT);');
+    //db.run('INSERT INTO messages (sender,receiver,contents) VALUES ("' + 'charlieSender' + '","' + 'charlie' + '","' + 'contents' + '")');
+    //db.run('INSERT INTO meetings (name,username,date,details) VALUES ("' + 'TestMeeting' + '","' + 'charlie' + '","' + '10/6/2019' + '","' + 'this is a test' + '")');
+    //db.run('DROP TABLE meetings');
     // Default Users:
     // Username: User1
     // Password: Password1
@@ -53,6 +56,11 @@ db.serialize(function(){
   db.each('SELECT * from users', function(err, row) {
       if ( row ) {
         console.log('Initial Users:', row);
+      }
+    });
+  db.each('SELECT * from messages', function(err, row) {
+      if ( row ) {
+        console.log('Initial Messages:', row);
       }
     });
 });
@@ -87,16 +95,6 @@ passport.deserializeUser(function(id, done) {
     return done(null, row);
   });
 });
-
-// Helper function that adds the user to the database
-const dbAddFunc = function(name, number, letter, user) {
-  db.run('INSERT INTO Grades (name, number, letter, username) VALUES ("' + name + '","' + number + '","' + letter + '","' + user + '")');
-  db.each('SELECT * from users', function(err, row) {
-      if ( row ) {
-        console.log('Initial Users:', row);
-      }
-    });
-}
 
 // Enforce strict routing for express-slash
 app.enable('strict routing');
@@ -156,7 +154,7 @@ router.get('/index.html/', function(request, response) {
 app.post('/viewMessages', function(request, response) {
   let resp;
   response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
-  db.all('SELECT * from messages WHERE username = ? ', request.user.username, function(err, rows) {
+  db.all('SELECT * from messages WHERE receiver = ? ', request.user.username, function(err, rows) {
     if (rows === undefined) {
       rows = [];
     }
@@ -184,7 +182,23 @@ app.post('/viewTasks', function(request, response) {
   });
 })
 
-// View all of the meetings assocaited with a given date
+// View all of the tasks associated with this user
+app.post('/viewMyTasks', function(request, response) {
+  let resp;
+  response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
+  db.all('SELECT * from tasks WHERE assigneeName=?', request.user.username, function(err, rows) {
+    if (rows === undefined) {
+      rows = [];
+    }
+    console.log(rows);
+    console.log(request.user.username);
+    resp = '{ "tasksArray": '+ JSON.stringify(rows) + ' }';
+    console.log(resp);
+    response.end(resp, 'utf-8');
+  });
+})
+
+// View all of the meetings associated with a given date
 app.post('/viewMeetings', function(request, response) {
   let resp;
   response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
@@ -240,6 +254,7 @@ app.post( '/submitTask', function( request, response ) {
   db.run('INSERT INTO messages (sender, receiver, contents) VALUES ("' + request.user.username + '","' + request.body.name + '","' + newTaskMSG + '")');
   db.run('INSERT INTO tasks (taskName, assigneeName, username, meetingName, details) VALUES ("' + request.body.task + '","' + request.body.name + '","' + request.user.username + '","' + request.body.meeting + '","' + request.body.details + '")');
   response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
+  resp = '{"taskAdded":' + true + '}';
   response.end(resp, 'utf-8');
 })
 
@@ -264,7 +279,7 @@ app.post( '/submitMeeting', function( request, response ) {
 app.delete('/removeTask', function( request, response ) {
 
 console.log(request.body.name);
-  db.run('DELETE FROM tasks WHERE name=? AND task=? AND meeting=? AND username=?', request.body.name, request.body.task, request.body.meeting, request.user.username, function(err) {
+  db.run('DELETE FROM tasks WHERE assigneeName=? AND taskName=? AND meetingName=? AND username=?', request.body.name, request.body.task, request.body.meeting, request.user.username, function(err) {
     if (err) {
       return console.error(err.message);
     }

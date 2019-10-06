@@ -1,8 +1,9 @@
-// Code specifically for messages that the user has received
+// Code specifically for messages and tasks that the user has received
 
 // Note that we don't allow for users to send messages themselves, but messages will be automatically
 // generated for them whenever they are assigned a task in another meeting
 let isHidden = true;
+let isHiddenTasks = true;
 
 const submit = function( e ) { // Submit request for a new or updated student's grades
   // prevent default form action from being carried out
@@ -35,7 +36,7 @@ const submit = function( e ) { // Submit request for a new or updated student's 
   return false;
 }
 
-// Get all messages from the db
+// Get all messages from the db for this user
 const view = function(e) {
   e.preventDefault();
 
@@ -51,13 +52,12 @@ const view = function(e) {
     response.json().then((data) => {
       console.log(data);
       let messagesArray = data.messagesArray;
-      let numStudents = messagesArray.length;
+      let num = messagesArray.length;
     let myTable = '<table class ="pageText"><tr><td>From:</td>';
     myTable += "<td>Contents:</td></tr>";
-    for (let i = 0; i < numStudents; i++) { // Make the table with one row per student
-      myTable += "<tr><td>" + messagesArray[i].name + "</td>";
-      myTable += "<td>" + messagesArray[i].number + "</td>";
-      myTable += "<td>" + messagesArray[i].letter + "</td></tr>";
+    for (let i = 0; i < num; i++) { // Make the table with one row per student
+      myTable += "<tr><td>" + messagesArray[i].sender + "</td>";
+      myTable += "<td>" + messagesArray[i].contents + "</td></tr>";
     }
     myTable += "</table>";
     document.getElementById("tablePrint").innerHTML = myTable;
@@ -73,9 +73,58 @@ const hide = function( e ) {
   isHidden = true;
 }
 
+// Get all tasks from the db from this user
+const viewMeetingTasks = function(e) {
+  e.preventDefault();
+  let tasksArray;
+
+  //const //nameInput = document.querySelector( '#meetingname' ),
+  const json = { },
+        body = JSON.stringify( json );
+  
+  fetch( '/viewMyTasks', {
+    method:'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: body
+  })
+  .then( function( response ) {
+    
+    // Fetch all tasks for this meeting in the database to add to a table
+    console.log( response );
+    response.json().then((data) => {
+      console.log(data);
+      tasksArray = data.tasksArray;
+      let numTasks = tasksArray.length;
+    let myTable = '<table class ="pageText"><tr><td>Task Name:</td>';
+    myTable += "<td>Meeting:</td>"
+    myTable += "<td>Details:</td></tr>";
+    for (let i = 0; i < numTasks; i++) { // Make the table with one row per task
+      myTable += "<tr><td>" + tasksArray[i].taskName + "</td>";
+      myTable += "<td>" + tasksArray[i].meetingName + "</td>";
+      myTable += "<td>" + tasksArray[i].details + "</td></tr>";
+    }
+    myTable += "</table>";
+    document.getElementById("tableTasksPrint").innerHTML = myTable;
+    isHiddenTasks = false;
+    });
+  });
+  return false;
+}
+
+const hideTasks = function( e ) {
+  e.preventDefault();
+  document.getElementById("tableTasksPrint").innerHTML = '<table></table>';
+  isHiddenTasks = true;
+}
+
 window.onload = function() { // Link each button to its respective function
   const viButton = document.querySelector( '#viewButton' );
   const hiButton = document.querySelector( '#hideButton' );
   hiButton.onclick = hide;
   viButton.onclick = view;
+  const viTaButton = document.querySelector( '#viewTasksButton' );
+  const hiTaButton = document.querySelector( '#hideTasksButton' );
+  hiTaButton.onclick = hideTasks;
+  viTaButton.onclick = viewMeetingTasks;
 }
