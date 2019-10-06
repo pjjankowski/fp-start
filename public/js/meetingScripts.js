@@ -31,14 +31,14 @@ const submitTask = function( e ) { // Submit request for a new task for a user
     response.json().then((data) => {
       document.getElementById("tablePrint").innerHTML = '<table></table>';
       if (!isHidden) {
-        viewMeeting(e);
+        viewMeetingTasks(e);
       }
     });
   });
   return false;
 }
 
-const viewMeeting = function(e) {
+const viewMeetingTasks = function(e) {
   e.preventDefault();
   let tasksArray;
 
@@ -105,7 +105,7 @@ const deleteTask = function( e ) { // Delete a task with a specified id number
       console.log(data);
       document.getElementById("tablePrint").innerHTML = '<table></table>';
       if (!isHidden) {
-        viewMeeting(e);
+        viewMeetingTasks(e);
       }
     });
   });
@@ -118,7 +118,7 @@ window.onload = function() { // Link each button to its respective function
   const deButton = document.querySelector( '#removeButton' );
   const hiButton = document.querySelector( '#hideButton' );
   hiButton.onclick = hide;
-  viButton.onclick = viewMeeting;
+  viButton.onclick = viewMeetingTasks;
   inButton.onclick = submitTask;
   deButton.onclick = deleteTask;
 }

@@ -1,27 +1,82 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>CS4241 Final Project</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="author" content="Peter Jankowski">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="author" content="Peter Jankowski" />
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
     <script src="js/messageScripts.js" defer></script>
   </head>
+
   <body class="p-3 mb-2 bg-dark text-white">
-    <nav class="navbar navbar-dark">
-      <h1 class="mx-auto">Messages</h1>
-    </nav>
-    <!-- Login and Signup form-->
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="https://fp-start.glitch.me/mainview.html"
+          >Menu</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="https://fp-start.glitch.me/mainview.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://fp-start.glitch.me/calendarview.html">Calendar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://fp-start.glitch.me/meetingview.html" >Meeting</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://fp-start.glitch.me/messagesview.html">Messages<span class="sr-only">(current)</span></a>
+            </li>
+          </ul>
+          <a href="https://fp-start.glitch.me">Logout</a>
+        </div>
+      </nav>
+      <h1>Messages</h1>
+    </header>
+
+    <!-- Rest of code -->
+
     <div>
       <ul>
-  <li><a href="https://fp-start.glitch.me/mainview.html">Back to main view</a></li>
         <!--This table can be shown or hidden to display current messages in the database for the current user only-->
-      <table id="tablePrint" class="table table-dark"></table>
-</ul>
-      <button id="viewButton" class="btn btn-secondary">Show Messages For You</button>
+        <table id="tablePrint" class="table table-dark"></table>
+      </ul>
+      <button id="viewButton" class="btn btn-secondary">
+        Show Messages For You
+      </button>
       <button id="hideButton" class="btn btn-secondary">Hide Messages</button>
     </div>
+
+    <footer>
+      <li>
+        <a href="https://fp-start.glitch.me/mainview.html">Back to main view</a>
+      </li>
+      <p>
+        Created by Peter Jankowski, Rosana Pochat, and Tom Graham
+      </p>
+    </footer>
   </body>
 </html>

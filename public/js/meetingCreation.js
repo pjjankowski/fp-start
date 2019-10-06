@@ -57,6 +57,30 @@ const removeMeeting = function( e ) { // Submit request for a new meeting
   return false;
 }
 
+const meetingsByDate = function( e ) { // Submit request for a new meeting
+  // prevent default form action from being carried out
+  e.preventDefault()
+
+  const dateInput = document.querySelector('#date'),
+        json = { date: dateInput.value},
+        body = JSON.stringify( json );
+
+  fetch( '/meetingsByDate', { //This meeting will be made originally empty
+    method:'POST',
+    body: JSON.stringify( json ),
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include' 
+  })
+  .then( function( response ) {
+    // Update the task list for the user
+    console.log( response );
+    response.json().then((data) => {
+      //act now that the meetings have been returned for a given (day? week? month?)
+    });
+  });
+  return false;
+}
+
 window.onload = function() { // Link each button to its respective function
   const inButton = document.querySelector( '#inputButton' );
   const deButton = document.querySelector( '#removeButton' );
