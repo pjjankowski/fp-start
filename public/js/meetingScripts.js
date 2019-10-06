@@ -43,7 +43,7 @@ const viewMeetingTasks = function(e) {
   let tasksArray;
 
   const nameInput = document.querySelector( '#meetingname' ),
-        json = { meetingname: nameInput.value, },
+        json = { meeting: nameInput.value, },
         body = JSON.stringify( json );
   
   fetch( '/viewTasks', {
@@ -60,12 +60,12 @@ const viewMeetingTasks = function(e) {
       console.log(data);
       tasksArray = data.tasksArray;
       let numTasks = tasksArray.length;
-    let myTable = '<table class ="pageText"><tr>Meeting: ' + nameInput.value + '</tr><tr><td>Task ID:</td>';
+    let myTable = '<table class ="pageText"><tr>Meeting: ' + nameInput.value + '</tr><tr><td>Task Name:</td>';
     myTable += "<td>Assigned to:</td>";
     myTable += "<td>Details:</td></tr>";
     for (let i = 0; i < numTasks; i++) { // Make the table with one row per task
-      myTable += "<tr><td>" + tasksArray[i].id + "</td>";
-      myTable += "<td>" + tasksArray[i].name + "</td>";
+      myTable += "<tr><td>" + tasksArray[i].taskName + "</td>";
+      myTable += "<td>" + tasksArray[i].assigneeName + "</td>";
       myTable += "<td>" + tasksArray[i].details + "</td></tr>";
     }
     myTable += "</table>";
