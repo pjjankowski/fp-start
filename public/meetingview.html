@@ -35,14 +35,14 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item">
               <a class="nav-link" href="https://fp-start.glitch.me/mainview.html">Home</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="https://fp-start.glitch.me/calendarview.html">Calendar</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="https://fp-start.glitch.me/meetingview.html">Meeting<span class="sr-only">(current)</span></a>
+            <li class="nav-item active">
+              <a class="nav-link" href="https://fp-start.glitch.me/meetingview.html">Task Manager<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="https://fp-start.glitch.me/messagesview.html">Messages</a>
@@ -51,7 +51,7 @@
           <a href="https://fp-start.glitch.me">Logout</a>
         </div>
       </nav>
-      <h1>Meeting</h1>
+      <h1>Meeting Task Manager</h1>
     </header>
 
     <main>
@@ -65,8 +65,8 @@
         />
         <button id="viewButton" class="btn btn-primary">View Tasks for Meeting</button>
         <button id="hideButton" class="btn btn-primary">Hide Meeting Tasks</button>
-        <details id="hideDetails" class="form-text text-light">
-          View a meeting of yours based on the name that you assigned it.
+        <details id="viewDetails" class="form-text text-light">
+          View, add, and remove tasks for a meeting of yours based on the name that you assigned it.
         </details>
 
         <label for="taskName" class="pageText">Task Name:</label>
