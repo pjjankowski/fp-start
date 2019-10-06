@@ -33,6 +33,9 @@ const submitTask = function( e ) { // Submit request for a new task for a user
       if (!isHidden) {
         viewMeetingTasks(e);
       }
+      if (data.taskAdded === false) {
+        alert("Cannot add task: Meeting not found")
+      }
     });
   });
   return false;
@@ -58,19 +61,23 @@ const viewMeetingTasks = function(e) {
     console.log( response );
     response.json().then((data) => {
       console.log(data);
-      tasksArray = data.tasksArray;
-      let numTasks = tasksArray.length;
-    let myTable = '<table class ="pageText"><tr>Meeting: ' + nameInput.value + '</tr><tr><td>Task Name:</td>';
-    myTable += "<td>Assigned to:</td>";
-    myTable += "<td>Details:</td></tr>";
-    for (let i = 0; i < numTasks; i++) { // Make the table with one row per task
-      myTable += "<tr><td>" + tasksArray[i].taskName + "</td>";
-      myTable += "<td>" + tasksArray[i].assigneeName + "</td>";
-      myTable += "<td>" + tasksArray[i].details + "</td></tr>";
-    }
-    myTable += "</table>";
-    document.getElementById("tablePrint").innerHTML = myTable;
-    isHidden = false;
+      if (data.tasksArray) {
+        tasksArray = data.tasksArray;
+        let numTasks = tasksArray.length;
+        let myTable = '<table class ="pageText"><tr>Meeting: ' + nameInput.value + '</tr><tr><td>Task Name:</td>';
+        myTable += "<td>Assigned to:</td>";
+        myTable += "<td>Details:</td></tr>";
+        for (let i = 0; i < numTasks; i++) { // Make the table with one row per task
+          myTable += "<tr><td>" + tasksArray[i].taskName + "</td>";
+          myTable += "<td>" + tasksArray[i].assigneeName + "</td>";
+          myTable += "<td>" + tasksArray[i].details + "</td></tr>";
+        }
+        myTable += "</table>";
+        document.getElementById("tablePrint").innerHTML = myTable;
+        isHidden = false;
+      } else {
+        alert("You have not made a meeting with the name that you entered.")
+      }
     });
   });
   return false;

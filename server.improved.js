@@ -170,15 +170,23 @@ app.post('/viewMessages', function(request, response) {
 app.post('/viewTasks', function(request, response) {
   let resp;
   response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
-  db.all('SELECT * from tasks WHERE username = ? AND meetingName = ?', request.user.username, request.body.meeting, function(err, rows) {
-    if (rows === undefined) {
-      rows = [];
-    }
-    console.log(rows);
-    console.log(request.user.username);
-    resp = '{ "tasksArray": '+ JSON.stringify(rows) + ' }';
-    console.log(resp);
-    response.end(resp, 'utf-8');
+  //first ensure that the meeting exists
+  db.get('SELECT * FROM meetings WHERE username=? AND name=?', request.user.username, request.body.meeting, function(err, row) {
+    if (row === undefined) {
+      resp = '{ "noTasksArray": ""}';
+      console.log(resp);
+      response.end(resp, 'utf-8');
+    } else {
+    db.all('SELECT * from tasks WHERE username = ? AND meetingName = ?', request.user.username, request.body.meeting, function(err, rows) {
+      if (rows === undefined) {
+        rows = [];
+      }
+      console.log(rows);
+      console.log(request.user.username);
+      resp = '{ "tasksArray": '+ JSON.stringify(rows) + ' }';
+      console.log(resp);
+      response.end(resp, 'utf-8');
+    })}
   });
 })
 
@@ -246,16 +254,24 @@ app.post( '/signup', function( request, response ) {
   })
 })
 
-// Add a new task for a user for a given meeting
+// Add a new task for a user for a given meeting, and send along a message
 // taskName TEXT, assigneeName TEXT, username TEXT, meetingName TEXT, details TEXT
 app.post( '/submitTask', function( request, response ) {
   let resp;
-  let newTaskMSG = "You have been assigned a task " + request.body.task + ", for the meeting " + request.body.meeting;
-  db.run('INSERT INTO messages (sender, receiver, contents) VALUES ("' + request.user.username + '","' + request.body.name + '","' + newTaskMSG + '")');
-  db.run('INSERT INTO tasks (taskName, assigneeName, username, meetingName, details) VALUES ("' + request.body.task + '","' + request.body.name + '","' + request.user.username + '","' + request.body.meeting + '","' + request.body.details + '")');
-  response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
-  resp = '{"taskAdded":' + true + '}';
-  response.end(resp, 'utf-8');
+  db.get('SELECT * FROM meetings WHERE username=? AND name=?', request.user.username, request.body.meetingName, function(err, row) {
+  if (row) { // only add this task if the meeting actually exists
+    let newTaskMSG = "You have been assigned a task " + request.body.task + ", for the meeting " + request.body.meeting;
+    db.run('INSERT INTO messages (sender, receiver, contents) VALUES ("' + request.user.username + '","' + request.body.name + '","' + newTaskMSG + '")');
+    db.run('INSERT INTO tasks (taskName, assigneeName, username, meetingName, details) VALUES ("' + request.body.task + '","' + request.body.name + '","' + request.user.username + '","' + request.body.meeting + '","' + request.body.details + '")');
+    response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
+    resp = '{"taskAdded":' + true + '}';
+    response.end(resp, 'utf-8');
+  } else {
+    response.writeHead( 200, "OK", {'Content-Type': 'text/plain' });
+    resp = '{"taskAdded":' + false + '}';
+    response.end(resp, 'utf-8');
+  }
+  })
 })
 
 // submit a meeting, but only make it if its name is unique for this user
