@@ -300,7 +300,8 @@ console.log(request.body.name);
       return console.error(err.message);
     }
     console.log(`Row(s) deleted ${this.changes}`);
-    db.run('DELETE FROM tasks WHERE meeting=? AND username=?', request.body.name, request.user.username, function(err) {
+    // Delete all tasks associated with the meeting automatically
+    db.run('DELETE FROM tasks WHERE meetingName=? AND username=?', request.body.name, request.user.username, function(err) {
     if (err) {
       return console.error(err.message);
     }

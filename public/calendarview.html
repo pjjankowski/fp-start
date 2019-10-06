@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    
+    <script src="js/calendarScripts.js" defer></script>
   </head>
   
   <body class="p-3 mb-2 bg-dark text-white">
@@ -47,14 +47,37 @@
     </header>
     
     <main>
+      <input type="date" id="enteredDate">
+      <input
+          type="text"
+          id="meetingName"
+          placeholder="Meeting Name Here"
+          
+        />
+      <input
+          type="text"
+          id="meetingDetails"
+          placeholder="Meeting Details Here"
+        />
+      <div>
+      <button id="viewButton" class="btn btn-primary">View Meetings For Date</button>
+      <button id="hideButton" class="btn btn-secondary">Hide Meetings</button>
+      <button id="submitButton" class="btn btn-primary">Create Meeting</button>
+        <button id="removeButton" class="btn btn-primary">Remove Meeting</button>
+        <table id="tablePrint" class="table table-dark"></table>
+      </div>
+    
+      <!--<canvas id="myCanvas">
+      
+      </canvas>-->
     
     </main>
     
  <footer>
-      <li>
+      <li class="text-center">
         <a href="https://fp-start.glitch.me/mainview.html">Back to main view</a>
       </li>
-      <p>
+      <p class="text-center">
         Created by Peter Jankowski, Rosana Pochat, and Tom Graham
       </p>
     </footer>
