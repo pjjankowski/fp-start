@@ -3,6 +3,113 @@
 let isHidden = true;
 let isHiddenTasks = true;
 
+const drawCal = function () {
+  const dateInput = document.querySelector( '#enteredDate' );
+  const calendarHeader = document.querySelector( '#calendarHeader' );
+  const month = dateInput.value.substring(5, 7);
+  const yearStr = dateInput.value.substring(0, 4);
+  let monthStr;
+  let dayLimit;
+  if (month === "01") {
+    monthStr = "January";
+    dayLimit = 31;
+  } else if (month === "02") {
+    monthStr = "February";
+    dayLimit = 28;
+    // Take leap years into account
+    if (Number(yearStr) % 4 === 0 && (Number(yearStr) % 100 !== 0 || Number(yearStr) % 400 === 0)) {
+      dayLimit++;
+    }
+  } else if (month === "03") {
+    monthStr = "March";
+    dayLimit = 31;
+  } else if (month === "04") {
+    monthStr = "April";
+    dayLimit = 30;
+  } else if (month === "05") {
+    monthStr = "May";
+    dayLimit = 31;
+  } else if (month === "06") {
+    monthStr = "June";
+    dayLimit = 30;
+  } else if (month === "07") {
+    monthStr = "July";
+    dayLimit = 31;
+  } else if (month === "08") {
+    monthStr = "August";
+    dayLimit = 31;
+  } else if (month === "09") {
+    monthStr = "September";
+    dayLimit = 30;
+  } else if (month === "10") {
+    monthStr = "October";
+    dayLimit = 31;
+  } else if (month === "11") {
+    monthStr = "November";
+    dayLimit = 30;
+  } else if (month === "12") {
+    monthStr = "December";
+    dayLimit = 31;
+  }
+  console.log(dateInput.value);
+  calendarHeader.innerHTML = "Calendar: " + monthStr + " " + yearStr;
+  const canvas = document.getElementById('myCanvas');
+  // Get our 2D drawing context
+  const ctx = canvas.getContext('2d');
+  const draw = function () {
+    ctx.fillStyle = '#ffffff';
+    // Draw the lines on the calendar
+    for (let i = 100; i < 700; i+=100) {
+      ctx.fillRect(i, 0, 1, canvas.height);
+      ctx.fillRect(0, i, canvas.width, 1);
+    }
+    ctx.font = "30px Times New Roman";
+    // Fill the top row with day names
+    ctx.fillText("Sun", 25, 75);
+    ctx.fillText("Mon", 125, 75);
+    ctx.fillText("Tue", 225, 75);
+    ctx.fillText("Wed", 325, 75);
+    ctx.fillText("Thu", 425, 75);
+    ctx.fillText("Fri", 525, 75);
+    ctx.fillText("Sat", 625, 75);
+    // Now start filling in the days of the month
+    let date = new Date(dateInput.value + "T00:00:00");
+    console.log(date);
+    // Get the weekday of the first day of the month
+    let firstDay = date.getDate();
+    let weekday = date.getDay();
+    while (firstDay % 7 != 1) {
+      firstDay--;
+      weekday--;
+      if (weekday === -1) {
+        weekday = 6;
+      }
+    }
+    // weekday now corresponds to the day in the week for the first day of the month
+    console.log(weekday);
+    let currentHeight = 175;
+    let currentX = 25 + (100 * weekday); // Set the x position based on the starting weekday
+    for (let i = 1; i < dayLimit+1; i++) {
+      if (i === date.getDate()) {
+        ctx.fillStyle = '#8a8aff';
+        ctx.fillText(i, currentX, currentHeight);
+        ctx.fillStyle = '#ffffff';
+      } else {    
+        ctx.fillText(i, currentX, currentHeight);
+      }
+      currentX += 100;
+      if (currentX > 625) {
+        currentX = 25;
+        currentHeight += 100;
+      }
+    }
+  }
+  
+  
+  draw();
+}
+
+// Hide the table of tasks
 const hide = function( e ) {
   e.preventDefault();
   document.getElementById("tablePrintM").innerHTML = '<table></table>';
@@ -48,6 +155,7 @@ const view = function(e) {
     myTable += "</table>";
     document.getElementById("tablePrint").innerHTML = myTable;
     isHidden = false;
+    drawCal();
     });
   });
   return false;
@@ -88,7 +196,7 @@ const viewTasks = function(e) {
           myTable += "<td>" + tasksArray[i].details + "</td></tr>";
         }
         myTable += "</table>";
-        document.getElementById("tablePrint").innerHTML = myTable;
+        document.getElementById("tablePrintM").innerHTML = myTable;
         isHidden = false;
       } else {
         alert("You have not made a meeting with the name that you entered.")
