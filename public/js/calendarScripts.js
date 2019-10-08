@@ -35,10 +35,12 @@ const view = function(e) {
       meetingsArray = data.meetingsArray;
       let numTasks = meetingsArray.length;
     let myTable = '<table class ="pageText"><td>Meeting Name:</td>';
+    myTable += "<td>Meeting Date:</td>";
     myTable += "<td>Meeting Creator:</td>";
     myTable += "<td>Meeting Details:</td></tr>";
     for (let i = 0; i < numTasks; i++) { // Make the table with one row per task
       myTable += "<tr><td>" + meetingsArray[i].name + "</td>";
+      myTable += "<td>" + meetingsArray[i].date + "</td>";
       myTable += "<td>" + meetingsArray[i].username + "</td>";
       myTable += "<td>" + meetingsArray[i].details + "</td></tr>";
     }
@@ -115,38 +117,6 @@ const remove = function( e ) { // Delete a task with a specified id number
   });
   return false;
 }
-
-/*let buildCal = function (myCal) {
-
-    var day = new Date();
-    var year = day.getFullYear();
-// staring at 0
-  
-    let monthName = [
-        'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-    let endDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    var isLeapYear = 0;
-  
-    var curMonth = day.getMonth() + 1;
-    monthName = monthName[curMonth-1];
-    var curMonthEndDate = endDays[curMonth-1];
-
-    // Draw canvas element
-    const canvas = document.getElementById('myCanvas');
-    canvas.height = 200;
-    canvas.width = 400;
-  
-    // Fill canvas 
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle='white';
-    ctx.fillRect(50,50,100,150);
-    ctx.fill();
-  
-  
-};
-
-// call
-buildCal();*/
 
 window.onload = function() { // Link each button to its respective function
   const viButton = document.querySelector( '#viewButton' ),

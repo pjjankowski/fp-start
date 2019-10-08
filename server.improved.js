@@ -221,6 +221,21 @@ app.post('/viewMeetings', function(request, response) {
   });
 })
 
+// View all of the meetings associated with a given date
+app.post('/viewMyMeetings', function(request, response) {
+  let resp;
+  response.writeHead( 200, "OK", {'Content-Type': 'application/json' });
+  db.all('SELECT * from meetings WHERE date=? AND username=?', request.body.date, request.user.username, function(err, rows) {
+    if (rows === undefined) {
+      rows = [];
+    }
+    console.log(rows);
+    resp = '{ "meetingsArray": '+ JSON.stringify(rows) + ' }';
+    console.log(resp);
+    response.end(resp, 'utf-8');
+  });
+})
+
 // Add a new user account
 app.post( '/signup', function( request, response ) {
   let dataString = '';
@@ -258,7 +273,7 @@ app.post( '/signup', function( request, response ) {
 // taskName TEXT, assigneeName TEXT, username TEXT, meetingName TEXT, details TEXT
 app.post( '/submitTask', function( request, response ) {
   let resp;
-  db.get('SELECT * FROM meetings WHERE username=? AND name=?', request.user.username, request.body.meetingName, function(err, row) {
+  db.get('SELECT * FROM meetings WHERE username=? AND name=?', request.user.username, request.body.meeting, function(err, row) {
   if (row) { // only add this task if the meeting actually exists
     let newTaskMSG = "You have been assigned a task " + request.body.task + ", for the meeting " + request.body.meeting;
     db.run('INSERT INTO messages (sender, receiver, contents) VALUES ("' + request.user.username + '","' + request.body.name + '","' + newTaskMSG + '")');

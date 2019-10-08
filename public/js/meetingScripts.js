@@ -64,7 +64,7 @@ const viewMeetingTasks = function(e) {
       if (data.tasksArray) {
         tasksArray = data.tasksArray;
         let numTasks = tasksArray.length;
-        let myTable = '<table class ="pageText"><tr>Meeting: ' + nameInput.value + '</tr><tr><td>Task Name:</td>';
+        let myTable = '<table class ="pageText"><tr><td></td><td>Meeting: ' + nameInput.value + '<td></tr><tr><td>Task Name:</td>';
         myTable += "<td>Assigned to:</td>";
         myTable += "<td>Details:</td></tr>";
         for (let i = 0; i < numTasks; i++) { // Make the table with one row per task

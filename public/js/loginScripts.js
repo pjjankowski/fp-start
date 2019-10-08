@@ -63,10 +63,5 @@ const loginFunc = function( e ) { // Handles logins
 }
         
 const loginRedir = function( e ) {
-  //fetch( '/loggedIn.html', {
-  //  method:'POST',
-  //  headers: { 'Content-Type': 'application/json' },
-  //  credentials: 'include' 
-  //})
   window.location.replace('https://fp-start.glitch.me/mainview.html');
 }
