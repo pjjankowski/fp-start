@@ -9,18 +9,16 @@ const hide = function( e ) {
 }
 
 // Get all meetings from the database for this date
-const view = function(e) {
+const view = function( e ) {
   e.preventDefault();
-  console.log("here");
 
   const dateInput = document.querySelector( '#enteredDate' );
-  console.log(dateInput.value);
   if (dateInput.value !== "") {
     let meetingsArray;
         const json = { date: dateInput.value, },
         body = JSON.stringify( json );
   
-  fetch( '/viewMeetings', {
+  fetch( '/viewMyMeetings', {
     method:'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -29,9 +27,7 @@ const view = function(e) {
   .then( function( response ) {
     
     // Fetch all tasks for this meeting in the database to add to a table
-    console.log( response );
     response.json().then((data) => {
-      console.log(data);
       meetingsArray = data.meetingsArray;
       let numTasks = meetingsArray.length;
     let myTable = '<table class ="pageText"><td>Meeting Name:</td>';
@@ -72,7 +68,6 @@ const submit = function( e ) { // Submit request for a new meeting
   })
   .then( function( response ) {
     // Update the task list for the user
-    console.log( response );
     response.json().then((data) => {
       //act now that the new meeting has been created
       if (data.meetingAdded) {
@@ -105,10 +100,8 @@ const remove = function( e ) { // Delete a task with a specified id number
   })
   .then( function( response ) {
     // Simply redisplay the table on the response after the deletion occurs
-    // if it is not hidden
-    console.log( response );
+    // if it is not currently hidden
     response.json().then((data) => {
-      console.log(data);
       document.getElementById("tablePrint").innerHTML = '<table></table>';
       if (!isHidden) {
         view(e);

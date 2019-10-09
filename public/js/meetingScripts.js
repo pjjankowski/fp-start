@@ -2,9 +2,6 @@
 
 let isHidden = true;
 
-// Meeting: name, ID, date, username (of meeting maker)
-// Tasks: MeetingName, ID, user, Details, TaskName, username
-
 // Each task has one meeting and one assigned user that it relates to, although names can be shared
 // Each meeting has a unique ID, and is findable as a unique combination for the meeting maker's username and the MeetingName
 
@@ -64,12 +61,14 @@ const viewMeetingTasks = function(e) {
       if (data.tasksArray) {
         tasksArray = data.tasksArray;
         let numTasks = tasksArray.length;
-        let myTable = '<table class ="pageText"><tr><td></td><td>Meeting: ' + nameInput.value + '<td></tr><tr><td>Task Name:</td>';
+        let myTable = '<table class ="pageText"><tr><td></td><td>' + nameInput.value + '<td></tr><tr><td>Task Name:</td>';
         myTable += "<td>Assigned to:</td>";
+        myTable += "<td>Date:</td>";
         myTable += "<td>Details:</td></tr>";
         for (let i = 0; i < numTasks; i++) { // Make the table with one row per task
           myTable += "<tr><td>" + tasksArray[i].taskName + "</td>";
           myTable += "<td>" + tasksArray[i].assigneeName + "</td>";
+          myTable += "<td>" + tasksArray[i].date + "</td>";
           myTable += "<td>" + tasksArray[i].details + "</td></tr>";
         }
         myTable += "</table>";

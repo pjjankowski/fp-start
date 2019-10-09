@@ -34,10 +34,10 @@
               <a class="nav-link" href="https://fp-start.glitch.me/mainview.html">Home<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="https://fp-start.glitch.me/calendarview.html">Calendar</a>
+              <a class="nav-link" href="https://fp-start.glitch.me/meetingmakerview.html">Meeting Creator</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="https://fp-start.glitch.me/meetingview.html">Task Manager</a>
+              <a class="nav-link" href="https://fp-start.glitch.me/meetingtasksview.html">Task Manager</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="https://fp-start.glitch.me/messagesview.html">Messages</a>
@@ -46,21 +46,41 @@
           <a href="https://fp-start.glitch.me">Logout</a>
         </div>
       </nav>
-      <h1>Home</h1>
     </header>
     
-    <main>
+    <main>  
+      <h1>Home</h1>
+      <hr style="border-color: white">
       <div class="container-fluid">
-        <p>Welcome to your Home Screen. Browser diferent views through the Navigation Bar on top, or look at meetings you have scheduled down below.</p>
+        <p>
+          Welcome to your Home Screen. Browser diferent views through the Navigation Bar on top, or look at meetings and tasks you have scheduled down below. 
+        </p>
         
-        <!-- First Row: Meetings and Calendar-->
+        <!-- First Row: Meetings&Tasks and Calendar-->
         <div class="row">
-          <!-- Meetings -->
           <div class="col-sm-5">
+            <!-- Meetings -->
             <h3>Meeting Information</h3>
             <input type="date" id="enteredDate" style="-webkit-appearance:none;">
+            <details id="meetingInfoMainView" class="form-text text-light">
+              Show all meetings on the date entered.
+            </details>
             <button id="viewButton" class="btn btn-primary">View Meetings For Date</button>
             <table id="tablePrint" class="table table-dark"></table>
+            
+            <!-- Tasks-->
+            <hr style="border-color: white">
+            <h3>Your Tasks</h3>
+            <fieldset id="entry" class="mx-auto">
+              <label for="meetingname" class="pageText">Meeting Name:</label>
+              <input type="text" id="meetingname" placeholder="Meeting Name Here" class="form-control"/>
+              <details id="taskInfoMainView" class="form-text text-light">
+                Displays the tasks that you have assigned for the meeting entered.
+              </details>
+              <button id="viewButtonM" class="btn btn-primary">View Tasks for Meeting</button>
+              <button id="hideButtonM" class="btn btn-secondary">Hide Meeting Tasks</button>
+            </fieldset>
+            <table id="tablePrintM" class="table table-dark"></table>
           </div>
           
           <!-- Calendar -->
@@ -68,27 +88,17 @@
             <h3 id="calendarHeader">Calendar</h3>
             <canvas id="myCanvas" width="700px" height="700px" style="border:1px solid #ffffff;"></canvas>
           </div>
-        </div>
-        
-        <!-- Second Row: Tasks-->
-        <div class="row">
-          <div class="col-sm-5">
-            <h3>Tasks</h3>
-            <fieldset id="entry" class="mx-auto">
-              <label for="meetingname" class="pageText">Meeting Name:</label>
-              <input type="text" id="meetingname" placeholder="Meeting Name Here" class="form-control"/>
-              <button id="viewButtonM" class="btn btn-primary">View Tasks for Meeting</button>
-              <button id="hideButtonM" class="btn btn-secondary">Hide Meeting Tasks</button>
-            </fieldset>
-            <table id="tablePrintM" class="table table-dark"></table>
-          </div>
-        </div>
-        
+        </div>        
       </div>
     </main>
     
-    <footer class="page-footer font-small">
-      <p class="text-center">Created by Peter Jankowski, Rosana Pochat, and Tom Graham</p>
+    <footer>
+      <div>
+        <hr style="border-color: white">
+        <p class="text-center">
+           Created by Tom Graham, Peter Jankowski, and Rosana Pochat
+        </p>
+      </div>
     </footer>
   </body>
 </html>

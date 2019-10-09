@@ -7,7 +7,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <meta name="author" content="Peter Jankowski" />
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -42,10 +41,10 @@
               <a class="nav-link" href="https://fp-start.glitch.me/mainview.html">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="https://fp-start.glitch.me/calendarview.html">Calendar</a>
+              <a class="nav-link" href="https://fp-start.glitch.me/meetingmakerview.html">Meeting Creator</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="https://fp-start.glitch.me/meetingview.html" >Task Manager</a>
+              <a class="nav-link" href="https://fp-start.glitch.me/meetingtasksview.html" >Task Manager</a>
             </li>
             <li class="nav-item active">
               <a class="nav-link" href="https://fp-start.glitch.me/messagesview.html">Messages<span class="sr-only">(current)</span></a>
@@ -54,34 +53,48 @@
           <a href="https://fp-start.glitch.me">Logout</a>
         </div>
       </nav>
-      <h1>Messages</h1>
     </header>
 
-    <!-- Rest of code -->
 
-    <div>
-      <ul>
-        <!--This table can be shown or hidden to display current messages in the database for the current user only-->
-        <table id="tablePrint" class="table table-dark"></table>
-      </ul>
-      <button id="viewButton" class="btn btn-primary">
-        Show Messages For You
-      </button>
-      <button id="hideButton" class="btn btn-secondary">Hide Messages</button>
-      <button id="viewTasksButton" class="btn btn-primary">
-        View your current tasks
-      </button>
-      <button id="hideTasksButton" class="btn btn-secondary">Hide Your Current Tasks</button>
-      <table id="tableTasksPrint" class="table table-dark"></table>
+    <div class="row">
+      <div class="col-sm-6">
+        <h3>Messages</h3>
+        <hr style="border-color: white">
+        <details id="messagesHelp" class="form-text text-light">
+        Here you can see messages sent to you as you are assigned and unassigned from tasks.
+        </details>
+        <button id="viewButton" class="btn btn-primary">Show Messages For You</button>
+        <button id="hideButton" class="btn btn-secondary">Hide Messages</button>
+        <ul><!--This table can be shown or hidden to display current messages in the database for the current user only-->
+          <table id="tablePrint" class="table table-dark"></table>
+        </ul>
+      </div>
+      
+      <div class="col-sm-6">
+        <h3>Your Tasks</h3>
+        <hr style="border-color: white">
+        <details id="tasksHelp" class="form-text text-light">
+          Here you can see all tasks currently assigned to you.
+        </details>
+        <button id="viewTasksButton" class="btn btn-primary">View your current tasks</button>
+        <button id="hideTasksButton" class="btn btn-secondary">Hide Your Current Tasks</button>
+        <table id="tableTasksPrint" class="table table-dark"></table>
+      </div>
     </div>
+      
+    
+ 
 
     <footer>
-      <li class="text-center">
-        <a href="https://fp-start.glitch.me/mainview.html">Back to main view</a>
-      </li>
-      <p class="text-center">
-        Created by Peter Jankowski, Rosana Pochat, and Tom Graham
-      </p>
+      <div>
+        <hr style="border-color: white">
+        <li class="text-center">
+          <a href="https://fp-start.glitch.me/mainview.html"><u>Back to main view</u></a>
+        </li>
+        <p class="text-center">
+           Created by Tom Graham, Peter Jankowski, and Rosana Pochat
+        </p>
+      </div>
     </footer>
   </body>
 </html>
