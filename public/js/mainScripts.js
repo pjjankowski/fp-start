@@ -3,8 +3,11 @@
 let isHidden = true;
 let isHiddenTasks = true;
 
-const drawCal = function () {
-  const dateInput = document.querySelector( '#enteredDate' );
+const drawCal = function (date) {
+  let dateInput = document.querySelector( '#enteredDate' );
+  if (date) {
+    dateInput.value = date;
+  }
   const calendarHeader = document.querySelector( '#calendarHeader' );
   const month = dateInput.value.substring(5, 7);
   const yearStr = dateInput.value.substring(0, 4);
@@ -51,12 +54,13 @@ const drawCal = function () {
     monthStr = "December";
     dayLimit = 31;
   }
-  console.log(dateInput.value);
   calendarHeader.innerHTML = "Calendar: " + monthStr + " " + yearStr;
   const canvas = document.getElementById('myCanvas');
   // Get our 2D drawing context
   const ctx = canvas.getContext('2d');
   const draw = function () {
+    ctx.fillStyle = '#212529';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#ffffff';
     // Draw the lines on the calendar
     for (let i = 100; i < 700; i+=100) {
@@ -72,9 +76,9 @@ const drawCal = function () {
     ctx.fillText("Thu", 425, 75);
     ctx.fillText("Fri", 525, 75);
     ctx.fillText("Sat", 625, 75);
+    
     // Now start filling in the days of the month
     let date = new Date(dateInput.value + "T00:00:00");
-    console.log(date);
     // Get the weekday of the first day of the month
     let firstDay = date.getDate();
     let weekday = date.getDay();
@@ -86,12 +90,11 @@ const drawCal = function () {
       }
     }
     // weekday now corresponds to the day in the week for the first day of the month
-    console.log(weekday);
     let currentHeight = 175;
     let currentX = 25 + (100 * weekday); // Set the x position based on the starting weekday
     for (let i = 1; i < dayLimit+1; i++) {
       if (i === date.getDate()) {
-        ctx.fillStyle = '#8a8aff';
+        ctx.fillStyle = '#ff4000';
         ctx.fillText(i, currentX, currentHeight);
         ctx.fillStyle = '#ffffff';
       } else {    
@@ -104,8 +107,6 @@ const drawCal = function () {
       }
     }
   }
-  
-  
   draw();
 }
 
@@ -119,16 +120,14 @@ const hide = function( e ) {
 // Get all meetings from the database for this date and this user
 const view = function(e) {
   e.preventDefault();
-  console.log("here");
 
   const dateInput = document.querySelector( '#enteredDate' );
-  console.log(dateInput.value);
   if (dateInput.value !== "") {
     let meetingsArray;
         const json = { date: dateInput.value, },
         body = JSON.stringify( json );
   
-  fetch( '/viewMyMeetings', {
+  fetch( '/viewMeetings', {
     method:'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -139,7 +138,6 @@ const view = function(e) {
     // Fetch all tasks for this meeting in the database to add to a table
     console.log( response );
     response.json().then((data) => {
-      console.log(data);
       meetingsArray = data.meetingsArray;
       let numTasks = meetingsArray.length;
     let myTable = '<table class ="pageText"><td>Meeting Name:</td>';
@@ -183,16 +181,18 @@ const viewTasks = function(e) {
     // Fetch all tasks for this meeting in the database to add to a table
     console.log( response );
     response.json().then((data) => {
-      console.log(data);
+      console.log( data );
       if (data.tasksArray) {
         tasksArray = data.tasksArray;
         let numTasks = tasksArray.length;
-        let myTable = '<table class ="pageText"><tr>Meeting: ' + nameInput.value + '</tr><tr><td>Task Name:</td>';
+        let myTable = '<table class ="pageText"><tr><td>' + nameInput.value + '</tr><td><tr><td>Task Name:</td>';
         myTable += "<td>Assigned to:</td>";
+        myTable += "<td>Date:</td>";
         myTable += "<td>Details:</td></tr>";
         for (let i = 0; i < numTasks; i++) { // Make the table with one row per task
           myTable += "<tr><td>" + tasksArray[i].taskName + "</td>";
           myTable += "<td>" + tasksArray[i].assigneeName + "</td>";
+          myTable += "<td>" + tasksArray[i].date + "</td>";
           myTable += "<td>" + tasksArray[i].details + "</td></tr>";
         }
         myTable += "</table>";
@@ -213,4 +213,10 @@ window.onload = function() { // Link each button to its respective function
   viButton.onclick = view;
   hiButton.onclick = hide;
   viTaButton.onclick = viewTasks;
+  let today = new Date();
+  let day = String(today.getDate()).padStart(2, '0');
+  let month = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let year = today.getFullYear();
+  today = year + '-' + month + '-' + day;
+  drawCal(today);
 }

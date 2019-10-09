@@ -1,8 +1,8 @@
 {
-  "name": "",
-  "version": "",
-  "description": "",
-  "author": "",
+  "name": "fp-start",
+  "version": "0.1.0",
+  "description": "A nice description",
+  "author": "Many ",
   "scripts": {
     "start": "node server.improved.js"
   },
